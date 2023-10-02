@@ -11,6 +11,8 @@ function init() {
     antialias: true
   })
 
+  const clock = new THREE.Clock()
+
   renderer.setSize(window.innerWidth, window.innerHeight)
   document.body.appendChild(renderer.domElement)
 
@@ -30,8 +32,16 @@ function init() {
   // Added Mesh
   const geometry = new THREE.BoxGeometry(2, 2, 2)
   const material = new THREE.MeshStandardMaterial({
-    color: 0xcc99ff
+    color: '#cc99ff',
+    // transparent: true,
+    // opacity: 0.7,
+    // visible: false,
+    // wireframe: true,
+    // side: THREE.DoubleSide, // FrontSide, BackSide, DoubleSide
   })
+
+  material.wireframe = false
+
   const cube = new THREE.Mesh(geometry, material)
   scene.add(cube);
   
@@ -46,5 +56,24 @@ function init() {
   ambientLight.position.set(3, 2, 1)
   scene.add(ambientLight)
 
-  renderer.render(scene, camera)
+  function render() {
+    cube.rotation.x += THREE.MathUtils.degToRad(0.5)
+    cube.position.y = Math.sin(cube.rotation.x)
+    cube.rotation.y = clock.getElapsedTime()
+    // cube.scale.x = Math.cos(cube.rotation.x)
+
+    renderer.render(scene, camera)
+    requestAnimationFrame(render)
+  }
+  render()
+
+  function handleResize() {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.render(scene, camera)
+  }
+
+  window.addEventListener("resize", handleResize)
 }
