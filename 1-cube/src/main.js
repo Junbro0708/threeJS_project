@@ -26,13 +26,13 @@ function init() {
     1, // near
     500 // far
   )
-  // camera.position.z = 5;
-  camera.position.set(3, 4, 5)
+  camera.position.z = 5;
   
   // Added Mesh
-  const geometry = new THREE.BoxGeometry(2, 2, 2)
-  const material = new THREE.MeshStandardMaterial({
-    color: '#cc99ff',
+  const cubeGeometry = new THREE.IcosahedronGeometry(1)
+  const cubeMaterial = new THREE.MeshLambertMaterial({
+    color: '#00ffff',
+    emissive: 0x111111
     // transparent: true,
     // opacity: 0.7,
     // visible: false,
@@ -40,26 +40,19 @@ function init() {
     // side: THREE.DoubleSide, // FrontSide, BackSide, DoubleSide
   })
 
-  material.wireframe = false
-
-  const cube = new THREE.Mesh(geometry, material)
+  const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
   scene.add(cube);
-  
-  camera.lookAt(cube.position)
 
   // Added light
-  const directionalLight = new THREE.DirectionalLight(0xf0f0f0, 1)
-  directionalLight.position.set(-1, 2, 3)
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 2)
   scene.add(directionalLight)
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.1)
-  ambientLight.position.set(3, 2, 1)
-  scene.add(ambientLight)
-
   function render() {
+    const elapsedTime = clock.getElapsedTime();
     cube.rotation.x += THREE.MathUtils.degToRad(0.5)
-    cube.position.y = Math.sin(cube.rotation.x)
-    cube.rotation.y = clock.getElapsedTime()
+    cube.rotation.y = elapsedTime
+    // cube.position.y = Math.sin(cube.rotation.x)
+    // cube.rotation.y = clock.getElapsedTime()
     // cube.scale.x = Math.cos(cube.rotation.x)
 
     renderer.render(scene, camera)
