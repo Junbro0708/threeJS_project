@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import GUI from "lil-gui"
 
 window.addEventListener('load', function() {
   init()
@@ -103,4 +104,24 @@ function init() {
   }
 
   window.addEventListener("resize", handleResize)
+
+  const gui = new GUI()
+  // gui.add(cube.position, 'x', -3, 3, 0.1)
+  gui
+    .add(cube.position,'x')
+    .min(-3)
+    .max(3)
+    .step(0.1)
+
+  gui.add(skeleton, 'visible')
+
+  const colorOption = {
+    color: 0x00ffff,
+  }
+
+  gui
+    .addColor(colorOption, 'color')
+    .onChange((val) => {
+      cube.material.color.set(val)
+    })
 }
