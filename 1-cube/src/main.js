@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 window.addEventListener('load', function() {
   init()
@@ -27,6 +28,19 @@ function init() {
     500 // far
   )
   camera.position.z = 5;
+
+  const controls = new OrbitControls(camera, renderer.domElement)
+  // controls.autoRotate = true
+  // controls.autoRotateSpeed = 30
+  controls.enableDamping = true
+  controls.dampingFactor = 0.1
+  controls.enableZoom = true
+  controls.enablePan = true
+  // controls.maxDistance = 100
+  // controls.minDistance = 50
+
+  // const axesHelper = new THREE.AxesHelper(5)
+  // scene.add(axesHelper)
   
   // Added Mesh
   const cubeGeometry = new THREE.IcosahedronGeometry(1)
@@ -41,11 +55,23 @@ function init() {
   })
 
   const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
-  scene.add(cube);
+  
+  const skeletonGeometry = new THREE.IcosahedronGeometry(2)
+  const skeletonMaterial = new THREE.MeshBasicMaterial({
+    wireframe: true,
+    transparent: true,
+    opacity: 0.2,
+    color: "#aaaaaa"    
+  })
+  
+  const skeleton = new THREE.Mesh(skeletonGeometry, skeletonMaterial)
+  
+  scene.add(cube, skeleton);
 
   // Added light
   const directionalLight = new THREE.DirectionalLight(0xffffff, 2)
   scene.add(directionalLight)
+
 
   function render() {
     const elapsedTime = clock.getElapsedTime();
@@ -55,7 +81,13 @@ function init() {
     // cube.rotation.y = clock.getElapsedTime()
     // cube.scale.x = Math.cos(cube.rotation.x)
 
+    skeleton.rotation.x += THREE.MathUtils.degToRad(0.5)
+    skeleton.rotation.y = elapsedTime * 0.1
+
     renderer.render(scene, camera)
+
+    controls.update()
+
     requestAnimationFrame(render)
   }
   render()
@@ -66,6 +98,8 @@ function init() {
 
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.render(scene, camera)
+
+    controls.update()
   }
 
   window.addEventListener("resize", handleResize)
