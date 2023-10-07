@@ -1,4 +1,6 @@
 import * as THREE from 'three'
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
+import typeface from './assets/font.json'
 
 window.addEventListener('load', function() {
   init()
@@ -23,6 +25,12 @@ function init() {
     500
   )
   camera.position.z = 5;
+
+  // Font
+  const fontLoader = new FontLoader()
+  const font = fontLoader.parse(typeface)
+  console.log(font)
+
 
   function render() {
     renderer.render(scene, camera)
