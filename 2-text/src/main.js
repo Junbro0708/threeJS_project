@@ -1,12 +1,15 @@
 import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
-import typeface from './assets/font.json'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import GUI from 'lil-gui'
 
 window.addEventListener('load', function() {
   init()
 })
 
 function init() {
+  const gui = new GUI()
   const renderer = new THREE.WebGLRenderer({
     antialias: true
   })
@@ -26,11 +29,36 @@ function init() {
   )
   camera.position.z = 5;
 
+  new OrbitControls(camera, renderer.domElement)
+
   // Font
   const fontLoader = new FontLoader()
-  const font = fontLoader.parse(typeface)
-  console.log(font)
+  fontLoader.load(
+    './assets/font.json',
+    font => {
+      const textGeometry = new TextGeometry('나는 준브로', {
+        font,
+        size: 0.5,
+        height: 0.1,
+      })
+      const textMaterial = new THREE.MeshPhongMaterial({color: 0x00c896});
+      const text = new THREE.Mesh(textGeometry, textMaterial)
+      scene.add(text)
+    },
+  )
 
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(ambientLight)
+
+  const pointLight = new THREE.PointLight(0xffffff, 100)
+  const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.5)
+  pointLight.position.set(3, 0, 2)
+  scene.add(pointLight, pointLightHelper)
+
+  gui.add(pointLight.position, 'x')
+    .min(-3)
+    .max(3)
+    .step(0.1)
 
   function render() {
     renderer.render(scene, camera)
