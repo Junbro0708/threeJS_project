@@ -8,7 +8,7 @@ window.addEventListener('load', function() {
   init()
 })
 
-function init() {
+async function init() {
   const gui = new GUI()
   const renderer = new THREE.WebGLRenderer({
     antialias: true
@@ -33,19 +33,16 @@ function init() {
 
   // Font
   const fontLoader = new FontLoader()
-  fontLoader.load(
-    './assets/font.json',
-    font => {
-      const textGeometry = new TextGeometry('나는 준브로', {
-        font,
-        size: 0.5,
-        height: 0.1,
-      })
-      const textMaterial = new THREE.MeshPhongMaterial({color: 0x00c896});
-      const text = new THREE.Mesh(textGeometry, textMaterial)
-      scene.add(text)
-    },
-  )
+
+  const font = await fontLoader.loadAsync('./assets/font.json')
+  const textGeometry = new TextGeometry('나는 준브로', {
+    font,
+    size: 0.5,
+    height: 0.1,
+  })
+  const textMaterial = new THREE.MeshPhongMaterial({color: 0x00c896});
+  const text = new THREE.Mesh(textGeometry, textMaterial)
+  scene.add(text)
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 1);
   scene.add(ambientLight)
