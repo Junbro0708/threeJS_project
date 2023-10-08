@@ -44,6 +44,15 @@ async function init() {
   const text = new THREE.Mesh(textGeometry, textMaterial)
   scene.add(text)
 
+  textGeometry.computeBoundingBox()
+  // textGeometry.translate(
+  //   -(textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x) * 0.5,
+  //   -(textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y) * 0.5,
+  //   -(textGeometry.boundingBox.max.z - textGeometry.boundingBox.min.z) * 0.5,
+  // ) // center align
+  textGeometry.center();
+  console.log('textGeometry.boundingBox', textGeometry.boundingBox)
+
   const ambientLight = new THREE.AmbientLight(0xffffff, 1);
   scene.add(ambientLight)
 
