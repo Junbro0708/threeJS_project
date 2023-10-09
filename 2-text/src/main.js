@@ -14,6 +14,7 @@ async function init() {
     antialias: true
   })
 
+  renderer.shadowMap.enabled = true
   renderer.setSize(window.innerWidth, window.innerHeight)
   document.body.appendChild(renderer.domElement)
 
@@ -27,7 +28,7 @@ async function init() {
     1,
     500
   )
-  camera.position.z = 5;
+  camera.position.set(0, 1, 5)
 
   new OrbitControls(camera, renderer.domElement)
 
@@ -52,31 +53,56 @@ async function init() {
   const textMaterial = new THREE.MeshPhongMaterial();
   const text = new THREE.Mesh(textGeometry, textMaterial)
   textMaterial.map = textTexture
+  text.castShadow = true
   scene.add(text)
 
   textGeometry.computeBoundingBox()
-  // textGeometry.translate(
-  //   -(textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x) * 0.5,
-  //   -(textGeometry.boundingBox.max.y - textGeometry.boundingBox.min.y) * 0.5,
-  //   -(textGeometry.boundingBox.max.z - textGeometry.boundingBox.min.z) * 0.5,
-  // ) // center align
   textGeometry.center();
   console.log('textGeometry.boundingBox', textGeometry.boundingBox)
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+  // Plane Geometry
+  const planeGeometry = new THREE.PlaneGeometry(3000, 3000)
+  const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 })
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial)
+  plane.position.z = -5
+  plane.receiveShadow = true
+  scene.add(plane)
+
+  // Ambient Light
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
   scene.add(ambientLight)
 
-  const pointLight = new THREE.PointLight(0xffffff, 100)
-  pointLight.position.set(3, 0, 2)
-  scene.add(pointLight)
+  // Spot Light
+  const spotLight = new THREE.SpotLight(0xffffff, 10, 30, Math.PI * 0.15, 0.2, 0.5) // 색상, 강도, 거리, 퍼지는 각도, 감쇄 정도, 어두워지는 양
+  spotLight.position.set(0, 0, 5)
+  spotLight.target.position.set(0, 0, -5)
+  spotLight.castShadow = true
+  spotLight.shadow.mapSize.width = 1024
+  spotLight.shadow.mapSize.height = 1024
+  spotLight.shadow.radius = 10
 
-  gui.add(pointLight.position, 'x')
-    .min(-3)
-    .max(3)
-    .step(0.1)
+  const spotLightHelper = new THREE.SpotLightHelper(spotLight)
+  scene.add(spotLight, spotLight.target, spotLightHelper)
+
+  // Moust Move
+  window.addEventListener('mousemove', e => {
+    const x = ((e.clientX / window.innerWidth) - 0.5) * 5
+    const y = ((e.clientY / window.innerHeight) - 0.5) * -5
+    
+    spotLight.target.position.set(x, y, -5)
+  })
+
+  const spotLightFolder = gui.addFolder('SpotLight')
+  spotLightFolder.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(0.01)
+  spotLightFolder.add(spotLight.position, 'z').min(1).max(10).step(0.01).name('position.z')
+  spotLightFolder.add(spotLight, 'distance').min(1).max(30).step(0.01)
+  spotLightFolder.add(spotLight, 'decay').min(0).max(10).step(0.01)
+  spotLightFolder.add(spotLight, 'penumbra').min(0).max(1).step(0.01)
 
   function render() {
     renderer.render(scene, camera)
+
+    spotLightHelper.update()
 
     requestAnimationFrame(render)
   }
