@@ -31,17 +31,27 @@ async function init() {
 
   new OrbitControls(camera, renderer.domElement)
 
+  // Texture
+  const textureLoader = new THREE.TextureLoader()
+
+  const textTexture = await textureLoader.load('./assets/holographic.jpeg')
+
   // Font
   const fontLoader = new FontLoader()
 
   const font = await fontLoader.loadAsync('./assets/font.json')
-  const textGeometry = new TextGeometry('나는 준브로', {
+  const textGeometry = new TextGeometry('Hi!, I\'m Jun : )', {
     font,
     size: 0.5,
     height: 0.1,
+    bevelEnabled: true,
+    bevelSegments: 5,
+    bevelSize: 0.02,
+    bevelThickness: 0.02
   })
-  const textMaterial = new THREE.MeshPhongMaterial({color: 0x00c896});
+  const textMaterial = new THREE.MeshPhongMaterial();
   const text = new THREE.Mesh(textGeometry, textMaterial)
+  textMaterial.map = textTexture
   scene.add(text)
 
   textGeometry.computeBoundingBox()
@@ -57,9 +67,8 @@ async function init() {
   scene.add(ambientLight)
 
   const pointLight = new THREE.PointLight(0xffffff, 100)
-  const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.5)
   pointLight.position.set(3, 0, 2)
-  scene.add(pointLight, pointLightHelper)
+  scene.add(pointLight)
 
   gui.add(pointLight.position, 'x')
     .min(-3)
