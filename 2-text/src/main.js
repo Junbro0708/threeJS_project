@@ -81,6 +81,9 @@ async function init() {
   spotLight.shadow.mapSize.height = 1024
   spotLight.shadow.radius = 10
 
+  const spotLightTexture = textureLoader.load('./assets/gradient.jpg')
+  spotLight.map = spotLightTexture
+
   const spotLightHelper = new THREE.SpotLightHelper(spotLight)
   scene.add(spotLight, spotLight.target, spotLightHelper)
 
