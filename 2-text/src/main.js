@@ -13,7 +13,7 @@ window.addEventListener('load', function() {
 })
 
 async function init() {
-  const gui = new GUI()
+  // const gui = new GUI()
   const renderer = new THREE.WebGLRenderer({
     antialias: true
   })
@@ -89,7 +89,7 @@ async function init() {
   spotLight.map = spotLightTexture
 
   const spotLightHelper = new THREE.SpotLightHelper(spotLight)
-  scene.add(spotLight, spotLight.target, spotLightHelper)
+  scene.add(spotLight, spotLight.target)
 
   // Moust Move
   window.addEventListener('mousemove', e => {
@@ -99,12 +99,12 @@ async function init() {
     spotLight.target.position.set(x, y, -5)
   })
 
-  const spotLightFolder = gui.addFolder('SpotLight')
-  spotLightFolder.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(0.01)
-  spotLightFolder.add(spotLight.position, 'z').min(1).max(10).step(0.01).name('position.z')
-  spotLightFolder.add(spotLight, 'distance').min(1).max(30).step(0.01)
-  spotLightFolder.add(spotLight, 'decay').min(0).max(10).step(0.01)
-  spotLightFolder.add(spotLight, 'penumbra').min(0).max(1).step(0.01)
+  // const spotLightFolder = gui.addFolder('SpotLight')
+  // spotLightFolder.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(0.01)
+  // spotLightFolder.add(spotLight.position, 'z').min(1).max(10).step(0.01).name('position.z')
+  // spotLightFolder.add(spotLight, 'distance').min(1).max(30).step(0.01)
+  // spotLightFolder.add(spotLight, 'decay').min(0).max(10).step(0.01)
+  // spotLightFolder.add(spotLight, 'penumbra').min(0).max(1).step(0.01)
 
   const composer = new EffectComposer(renderer)
   const renderPass = new RenderPass(scene, camera)
