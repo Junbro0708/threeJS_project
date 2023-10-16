@@ -2,6 +2,10 @@ import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+
 import GUI from 'lil-gui'
 
 window.addEventListener('load', function() {
@@ -102,15 +106,24 @@ async function init() {
   spotLightFolder.add(spotLight, 'decay').min(0).max(10).step(0.01)
   spotLightFolder.add(spotLight, 'penumbra').min(0).max(1).step(0.01)
 
+  const composer = new EffectComposer(renderer)
+  const renderPass = new RenderPass(scene, camera)
+  const unrealBloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight, 1.2, 1, 0))
+
+  composer.addPass(renderPass)
+  composer.addPass(unrealBloomPass)
+  
+  render()
+
   function render() {
-    renderer.render(scene, camera)
+    // renderer.render(scene, camera)
+    composer.render()
 
     spotLightHelper.update()
 
     requestAnimationFrame(render)
   }
 
-  render()
 
   function handleResize() {
     camera.aspect = window.innerWidth / window.innerHeight
